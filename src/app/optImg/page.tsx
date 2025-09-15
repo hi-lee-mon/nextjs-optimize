@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { Suspense } from "react";
+import VStack from "@/components/v-stack";
 
 export default async function Home() {
   return (
@@ -7,7 +9,17 @@ export default async function Home() {
       <p className="text-gray-400 mb-6">
         画像の形式がwebpに変わり、読み込みが遅延させる
       </p>
-      <div className="flex flex-wrap gap-6">
+      <VStack className="gap-4">
+        {/* SSR部分のラップで囲むことでページ全体はSSRになるが静的な部分を優先して表示することができる */}
+        <Suspense
+          fallback={
+            <p className="text-red-500 animate-bounce">
+              Sleep APIの呼び出し中・・・
+            </p>
+          }
+        >
+          <Sleep />
+        </Suspense>
         <div>
           <Image
             src={"https://images.dog.ceo/breeds/labrador/n02099712_6232.jpg"}
@@ -38,7 +50,12 @@ export default async function Home() {
           width={300}
           height={300}
         />
-      </div>
+      </VStack>
     </div>
   );
+}
+
+async function Sleep() {
+  await fetch("http://localhost:3000/api/getUser", { cache: "no-store" });
+  return <div>Sleepの読み込み完了</div>;
 }

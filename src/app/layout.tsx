@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ActiveLink } from "./active-link";
+import { ActiveLink } from "../components/active-link";
+import Auth from "@/components/auth";
+import HStack from "@/components/h-stack";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,32 +30,36 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header className="p-4 border-b border-b-zinc-200">
+        <header className="p-4 border-b border-b-zinc-200 ">
           <h1 className="text-2xl font-bold">Next.js Optimize</h1>
-          <nav className="flex gap-4 mt-2">
-            {[
-              {
-                href: "/",
-                name: "Home",
-              },
-              {
-                href: "/img",
-                name: "Image",
-              },
-              {
-                href: "/optImg",
-                name: "Optimized Image",
-              },
-            ].map(({ href, name }) => (
-              <ActiveLink
-                key={href}
-                href={href}
-                activeClassName="text-blue-500 underline font-bold"
-              >
-                {name}
-              </ActiveLink>
-            ))}
-          </nav>
+          <HStack className="justify-between px-4">
+            <nav className="flex gap-4 mt-2">
+              {[
+                {
+                  href: "/",
+                  name: "Home",
+                },
+                {
+                  href: "/img",
+                  name: "Image",
+                },
+                {
+                  href: "/optImg",
+                  name: "Optimized Image",
+                },
+              ].map(({ href, name }) => (
+                <ActiveLink
+                  key={href}
+                  href={href}
+                  activeClassName="text-blue-500 underline font-bold"
+                >
+                  {name}
+                </ActiveLink>
+              ))}
+            </nav>
+            {/* layoutページでSSRにするとページ全体がSSRになるのでuse clientにすることで子どものSSG化を保つ */}
+            <Auth />
+          </HStack>
         </header>
         {children}
       </body>
